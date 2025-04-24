@@ -1,0 +1,66 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+  <h1>ECC SHana converter</h1>
+  <p>Paste in ECC as csv</p>
+  <div>
+    <p>Input ECC</p>
+    <textarea id="input" rows="25" cols="180">
+    </textarea>
+  </div>
+  <div>
+    <button type="button" onclick="convert()">Convert</button>
+  </div>
+  <div>
+    <p>Read data</p>
+    <textarea id="meta" rows="10" cols="180"></textarea>
+  </div>
+  <div>
+    <p>Output SHana</p>
+    <textarea id="output" rows="40" cols="180"></textarea>
+  </div>
+  <script>
+    function convert() {
+      var input = document.getElementById("input").value;
+      var lines = input.split("\n");
+
+      let companyCode = lines[2].split(",")[1];
+      let profitCenter = lines[4].split(",")[1];
+      let nonZeroAccountsCount = 0;
+
+      var output =
+        "CATEGORY,RYEAR,POPER,RBUKRS,RCNTR,RACCT,KSL,RKCUR" + "\n" +
+        "Plan Category,General Ledger Fiscal Year,Posting Period,Company Code,Cost Center,Account Number,Amount in Global Currency,Global Currency" + "\n" +
+        "X,X,X,X,X,,,";
+
+      if (!lines[6].startsWith("Account,,")) {
+        window.alert("Error!");
+        return;
+      }
+
+      for (var i = 7; i < lines.length - 1; i++) {
+        var entry = lines[i].split(",");
+        if (entry[15] == '0') continue;
+        nonZeroAccountsCount++;
+
+        for (var month = 1; month <= 12; month++) {
+          output += `\n,,${month},${companyCode},${profitCenter},${entry[0]},${entry[2 + month]},`;
+        }
+
+      }
+
+      document.getElementById("meta").value =
+        `Company code: ${companyCode}\nProfit center: ${profitCenter}
+        \nNon-zero accounts found: ${nonZeroAccountsCount}`;
+
+      document.getElementById("output").value = output;
+    }
+
+  </script>
+</body>
+
+</html>
