@@ -1,7 +1,6 @@
 <html>
 
 <head>
-
 </head>
 
 <body>
@@ -32,30 +31,38 @@
       var input = document.getElementById("input").value;
       var lines = input.split("\n");
 
+      while (lines.indexOf("") > -1) {
+        lines.splice(lines.indexOf(""), 1);
+      }
+
       let companyCode = lines[companyCodeLine].split(eccSeparator)[1];
       let profitCenter = lines[profitCenterLine].split(eccSeparator)[1];
       let nonZeroAccountsCount = 0;
 
       var output =
-        "CATEGORY,RYEAR,POPER,RBUKRS,RCNTR,RACCT,KSL,RKCUR" + "\n" +
-        "Plan Category,General Ledger Fiscal Year,Posting Period,Company Code,Cost Center,Account Number,Amount in Global Currency,Global Currency" + "\n" +
-        "X,X,X,X,X,,,";
+        "CATEGORY\tRYEAR\tPOPER\tRBUKRS\tRCNTR\tRACCT\tKSL\tRKCUR" + "\n" +
+        "Plan Category\tGeneral Ledger Fiscal Year\tPosting Period\tCompany Code\tCost Center\tAccount Number\tAmount in Global Currency\tGlobal Currency" + "\n" +
+        "X\tX\tX\tX\tX\t\t\t";
 
       if (!lines[accountsLine].startsWith("Account\t\t")) {
-        window.alert("Error!");
+        window.alert("Error! Header lines mismatch");
         console.log(lines[accountsLine]);
         return;
       }
 
       for (var i = accountsLine + 1; i < lines.length - 1; i++) {
+        if (lines[i].startsWith("Account")) {
+          window.alert("Error! Something wrong in the list of inputs. It should end with the total");
+          return;
+        }
+
         var entry = lines[i].split(eccSeparator);
         if (entry[15] == '0') continue;
         nonZeroAccountsCount++;
 
         for (var month = 1; month <= 12; month++) {
-          output += `\n,,${month},${companyCode},${profitCenter},${entry[0]},${entry[2 + month]},`;
+          output += `\n\t\t${month}\t${companyCode}\t${profitCenter}\t${entry[0]}\t${entry[2 + month]}\t`;
         }
-
       }
 
       document.getElementById("meta").value =
