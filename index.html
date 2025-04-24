@@ -24,12 +24,16 @@
   </div>
   <script>
     const eccSeparator = "\t";
+    const fiscalYearLine = 0;
+    const companyCodeLine = 1;
+    const profitCenterLine = 3;
+    const accountsLine = 4;
     function convert() {
       var input = document.getElementById("input").value;
       var lines = input.split("\n");
 
-      let companyCode = lines[2].split(eccSeparator)[1];
-      let profitCenter = lines[4].split(eccSeparator)[1];
+      let companyCode = lines[companyCodeLine].split(eccSeparator)[1];
+      let profitCenter = lines[profitCenterLine].split(eccSeparator)[1];
       let nonZeroAccountsCount = 0;
 
       var output =
@@ -37,13 +41,13 @@
         "Plan Category,General Ledger Fiscal Year,Posting Period,Company Code,Cost Center,Account Number,Amount in Global Currency,Global Currency" + "\n" +
         "X,X,X,X,X,,,";
 
-      if (!lines[6].startsWith("Account\t\t")) {
+      if (!lines[accountsLine].startsWith("Account\t\t")) {
         window.alert("Error!");
-        console.log(lines[6]);
+        console.log(lines[accountsLine]);
         return;
       }
 
-      for (var i = 7; i < lines.length - 1; i++) {
+      for (var i = accountsLine + 1; i < lines.length - 1; i++) {
         var entry = lines[i].split(eccSeparator);
         if (entry[15] == '0') continue;
         nonZeroAccountsCount++;
