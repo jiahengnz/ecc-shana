@@ -23,12 +23,13 @@
     <textarea id="output" rows="40" cols="180"></textarea>
   </div>
   <script>
+    const eccSeparator = "\t";
     function convert() {
       var input = document.getElementById("input").value;
       var lines = input.split("\n");
 
-      let companyCode = lines[2].split(",")[1];
-      let profitCenter = lines[4].split(",")[1];
+      let companyCode = lines[2].split(eccSeparator)[1];
+      let profitCenter = lines[4].split(eccSeparator)[1];
       let nonZeroAccountsCount = 0;
 
       var output =
@@ -36,13 +37,14 @@
         "Plan Category,General Ledger Fiscal Year,Posting Period,Company Code,Cost Center,Account Number,Amount in Global Currency,Global Currency" + "\n" +
         "X,X,X,X,X,,,";
 
-      if (!lines[6].startsWith("Account,,")) {
+      if (!lines[6].startsWith("Account\t\t")) {
         window.alert("Error!");
+        console.log(lines[6]);
         return;
       }
 
       for (var i = 7; i < lines.length - 1; i++) {
-        var entry = lines[i].split("\t");
+        var entry = lines[i].split(eccSeparator);
         if (entry[15] == '0') continue;
         nonZeroAccountsCount++;
 
